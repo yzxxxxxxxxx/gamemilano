@@ -50,62 +50,6 @@ async def get_events(
         result = query.execute()
         events = result.data
         
-        # 如果数据库为空，返回示例数据
-        if not events:
-            print("数据库为空，返回示例数据")
-            events = [
-                {
-                    "id": "sample-1",
-                    "sport": "自由式滑雪",
-                    "discipline": "女子大跳台",
-                    "title": "自由式滑雪：女子大跳台决赛",
-                    "event_time": "2026-02-06T16:00:00Z",
-                    "location": "科尔蒂纳公园",
-                    "is_team_china": True,
-                    "type": "final"
-                },
-                {
-                    "id": "sample-2",
-                    "sport": "花样滑冰",
-                    "discipline": "双人滑",
-                    "title": "花样滑冰：双人滑短节目",
-                    "event_time": "2026-02-06T14:30:00Z",
-                    "location": "米兰冰上竞技场",
-                    "is_team_china": True,
-                    "type": "preliminary"
-                },
-                {
-                    "id": "sample-3",
-                    "sport": "短道速滑",
-                    "discipline": "短道速滑",
-                    "title": "短道速滑：男子1500米决赛",
-                    "event_time": "2026-02-07T10:00:00Z",
-                    "location": "米兰冰上竞技场",
-                    "is_team_china": True,
-                    "type": "final"
-                },
-                {
-                    "id": "sample-4",
-                    "sport": "冰球",
-                    "discipline": "男子冰球",
-                    "title": "男子冰球：小组赛 - 加拿大 vs 芬兰",
-                    "event_time": "2026-02-06T12:00:00Z",
-                    "location": "米兰体育馆",
-                    "is_team_china": False,
-                    "type": "preliminary"
-                },
-                {
-                    "id": "sample-5",
-                    "sport": "速度滑冰",
-                    "discipline": "速度滑冰",
-                    "title": "速度滑冰：女子3000米决赛",
-                    "event_time": "2026-02-08T11:00:00Z",
-                    "location": "米兰奥林匹克椭圆形体育场",
-                    "is_team_china": False,
-                    "type": "final"
-                }
-            ]
-        
         # 获取用户提醒状态
         reminders_result = supabase.table("user_reminders").select("event_id").eq("user_id", user_id).execute()
         reminded_event_ids = {r["event_id"] for r in reminders_result.data}

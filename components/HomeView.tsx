@@ -218,7 +218,6 @@ const HomeView: React.FC<Props> = ({ onSwitchTab }) => {
       >
         <div className="flex items-center justify-between px-4 mb-2">
           <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest">2026年2月</h4>
-          <span className="material-symbols-outlined text-sm text-white/40">calendar_month</span>
         </div>
         <div className="flex gap-3 px-4 overflow-x-auto no-scrollbar pb-2 scroll-smooth">
           {olympicDates.map((date) => {

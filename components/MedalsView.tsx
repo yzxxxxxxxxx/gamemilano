@@ -2,20 +2,25 @@
 import React, { useState, useEffect } from 'react';
 import { getMedals, getChinaMedals, MedalData, ChinaMedalData } from '../services/api';
 
+// 国旗图标组件 - 使用 flag-icons 库
+// https://github.com/lipis/flag-icons
 const FlagIcon: React.FC<{ iso: string }> = ({ iso }) => {
-  if (iso === 'CN') {
-    return (
-      <div className="w-8 h-5 rounded-sm bg-[#EE1C25] relative overflow-hidden border border-white/10 shrink-0">
-        <div className="absolute top-[15%] left-[10%] text-[8px] text-[#FFFF00] leading-none">★</div>
-      </div>
-    );
-  }
-  // 各国国旗颜色简化实现
-  const colors: Record<string, string> = { NO: 'bg-blue-700', DE: 'bg-slate-800', US: 'bg-blue-900', CA: 'bg-red-600', NL: 'bg-orange-500', SE: 'bg-blue-600', JP: 'bg-white', KR: 'bg-white', CH: 'bg-red-500' };
+  // flag-icons 使用小写的 ISO 3166-1-alpha-2 代码
+  const isoLower = iso.toLowerCase();
+
   return (
-    <div className={`w-8 h-5 rounded-sm ${colors[iso] || 'bg-slate-500'} border border-white/10 shrink-0 flex items-center justify-center text-[6px] font-bold text-white/50`}>
-      {iso}
-    </div>
+    <span
+      className={`fi fi-${isoLower}`}
+      style={{
+        width: '32px',
+        height: '20px',
+        display: 'inline-block',
+        borderRadius: '2px',
+        border: '1px solid rgba(255,255,255,0.1)',
+        backgroundSize: 'cover',
+        flexShrink: 0
+      }}
+    />
   );
 };
 

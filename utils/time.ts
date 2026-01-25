@@ -5,20 +5,24 @@
  * 以及倒计时逻辑
  */
 
-// 米兰与北京的时差（小时）
-// 米兰是 UTC+1, 北京是 UTC+8, 差 7 小时
-const TIMEZONE_OFFSET_HOURS = 7;
-
 /**
  * 将米兰时间字符串转换为北京时间 Date 对象
- * @param milanTimeStr 数据库中的时间字符串 (ISO format, assumed to be Milan time)
- * @returns Date object in local time (which we will assume represents Beijing time for display)
+ * 数据库存储的是意大利当地时间（无时区信息）
+ * 意大利冬令时是 CET (UTC+1)
+ * @param milanTimeStr 数据库中的时间字符串 (ISO format, 意大利当地时间)
+ * @returns Date object，在用户本地时区环境下会自动显示正确的时间
  */
 export function convertMilanToBeijing(milanTimeStr: string | null): Date | null {
     if (!milanTimeStr) return null;
-    const date = new Date(milanTimeStr);
-    // 增加7小时
-    date.setHours(date.getHours() + TIMEZONE_OFFSET_HOURS);
+
+    // 检查时间字符串是否已包含时区信息
+    // 如果没有时区信息，添加意大利时区标记 +01:00 (CET)
+    const hasTimezone = milanTimeStr.includes('+') || milanTimeStr.includes('Z') || milanTimeStr.includes('-', 10);
+    const milanTimeWithTz = hasTimezone ? milanTimeStr : milanTimeStr + '+01:00';
+
+    // JavaScript Date 会自动将此时间转换为用户本地时区
+    // 在北京时区(UTC+8)的用户会看到正确的北京时间
+    const date = new Date(milanTimeWithTz);
     return date;
 }
 
