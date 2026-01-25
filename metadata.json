@@ -1,0 +1,9 @@
+
+{
+  "name": "GameMilano - 2026冬奥会中国队版",
+  "description": "2026年冬奥会高端奥运伴侣应用，包含实时倒计时、赛程表以及由AI驱动的运动员深度解析。",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
