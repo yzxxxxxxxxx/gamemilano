@@ -90,7 +90,7 @@ const AISearchView: React.FC<Props> = ({ onClose }) => {
 
       {!result && !loading && (
         <div className="text-center text-white/30 text-[10px] uppercase tracking-widest mt-4">
-          由 Gemini AI 提供支持
+          由智谱 GLM-4.7-Flash 提供支持
         </div>
       )}
     </div>

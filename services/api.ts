@@ -117,6 +117,30 @@ export async function getChinaMedals(): Promise<ChinaMedalData> {
   return request<ChinaMedalData>('/medals/china');
 }
 
+/**
+ * 获取历史届次列表
+ */
+export async function getHistoryEditions(): Promise<{ year: number; location: string }[]> {
+  return request<{ year: number; location: string }[]>('/medals/history');
+}
+
+/**
+ * 获取指定年份的历史奖牌榜
+ */
+export async function getHistoryMedals(year: number): Promise<HistoricalMedalEntry[]> {
+  return request<HistoricalMedalEntry[]>(`/medals/history/${year}`);
+}
+
+export interface HistoricalMedalEntry {
+  rank: number;
+  country: string;
+  iso: string;
+  gold: number;
+  silver: number;
+  bronze: number;
+  total: number;
+}
+
 // ========== AI API ==========
 
 export interface AIResponse {

@@ -47,6 +47,14 @@ ALTER TABLE medals ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read access on medals" ON medals
   FOR SELECT USING (true);
 
+-- Allow public insert access
+CREATE POLICY "Allow public insert access on medals" ON medals
+  FOR INSERT WITH CHECK (true);
+
+-- Allow public update access
+CREATE POLICY "Allow public update access on medals" ON medals
+  FOR UPDATE USING (true);
+
 -- ========================================
 -- 3. User Reminders Table (用户提醒表)
 -- ========================================
@@ -66,7 +74,35 @@ CREATE POLICY "Allow public access on user_reminders" ON user_reminders
   FOR ALL USING (true);
 
 -- ========================================
--- 4. Insert Sample Data
+-- 4. Historical Medals Table (历史奖牌榜)
+-- ========================================
+CREATE TABLE IF NOT EXISTS historical_medals (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  year INTEGER NOT NULL,
+  location VARCHAR(100) NOT NULL,
+  country VARCHAR(100) NOT NULL,
+  iso CHAR(2) NOT NULL,
+  gold INTEGER DEFAULT 0,
+  silver INTEGER DEFAULT 0,
+  bronze INTEGER DEFAULT 0,
+  rank INTEGER NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(year, iso)
+);
+
+-- Enable Row Level Security
+ALTER TABLE historical_medals ENABLE ROW LEVEL SECURITY;
+
+-- Allow public read access
+CREATE POLICY "Allow public read access on historical_medals" ON historical_medals
+  FOR SELECT USING (true);
+
+-- Allow public insert access for synchronization
+CREATE POLICY "Allow public insert access on historical_medals" ON historical_medals
+  FOR INSERT WITH CHECK (true);
+
+-- ========================================
+-- 5. Insert Sample Data
 -- ========================================
 
 -- Insert sample events

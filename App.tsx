@@ -5,6 +5,7 @@ import HomeView from './components/HomeView';
 import MedalsView from './components/MedalsView';
 import AISearchView from './components/AISearchView';
 import ScheduleView from './components/ScheduleView';
+import HistoryView from './components/HistoryView';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<NavTab>(NavTab.HOME);
@@ -41,12 +42,7 @@ const App: React.FC = () => {
         {activeTab === NavTab.HOME && <HomeView onSwitchTab={setActiveTab} />}
         {activeTab === NavTab.MEDALS && <MedalsView />}
         {activeTab === NavTab.SCHEDULE && <ScheduleView />}
-        {activeTab === NavTab.PROFILE && (
-          <div className="flex flex-col items-center justify-center h-[60vh] text-slate-500">
-            <span className="material-symbols-outlined text-4xl mb-2">construction</span>
-            <p>该模块正在开发中</p>
-          </div>
-        )}
+        {activeTab === NavTab.HISTORY && <HistoryView />}
       </main>
 
       {/* AI Assistant Modal Overlay */}
@@ -83,11 +79,11 @@ const App: React.FC = () => {
             <span className="text-[10px] font-medium">赛程</span>
           </button>
           <button
-            onClick={() => setActiveTab(NavTab.PROFILE)}
-            className={`flex flex-col items-center gap-1 transition-all ${activeTab === NavTab.PROFILE ? 'text-milan-blue' : 'text-white/40'}`}
+            onClick={() => setActiveTab(NavTab.HISTORY)}
+            className={`flex flex-col items-center gap-1 transition-all ${activeTab === NavTab.HISTORY ? 'text-milan-blue' : 'text-white/40'}`}
           >
-            <span className="material-symbols-outlined">person</span>
-            <span className="text-[10px] font-medium">个人中心</span>
+            <span className="material-symbols-outlined">history</span>
+            <span className="text-[10px] font-medium">历史数据</span>
           </button>
         </div>
       </nav>

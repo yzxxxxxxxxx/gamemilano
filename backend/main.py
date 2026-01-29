@@ -8,6 +8,8 @@ import uvicorn
 
 from . import config
 from .routers import events, medals, ai, reminders
+from .scripts.sync_medals import run_sync
+import asyncio
 
 # 创建FastAPI应用
 app = FastAPI(
@@ -30,6 +32,23 @@ app.include_router(events.router)
 app.include_router(medals.router)
 app.include_router(ai.router)
 app.include_router(reminders.router)
+
+
+async def medal_sync_scheduler():
+    """定时抓取奖牌榜任务"""
+    while True:
+        try:
+            await run_sync()
+        except Exception as e:
+            print(f"奖牌同步后台任务出错: {e}")
+        # 每 30 分钟同步一次
+        await asyncio.sleep(1800)
+
+
+@app.on_event("startup")
+async def startup_event():
+    """应用启动时启动定时任务"""
+    asyncio.create_task(medal_sync_scheduler())
 
 
 @app.get("/")

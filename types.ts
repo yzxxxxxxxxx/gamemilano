@@ -3,7 +3,23 @@ export enum NavTab {
   HOME = 'home',
   MEDALS = 'medals',
   SCHEDULE = 'schedule',
-  PROFILE = 'profile'
+  HISTORY = 'history'
+}
+
+
+export interface OlympicEdition {
+  year: number;
+  location: string;
+}
+
+export interface HistoricalMedalEntry {
+  rank: number;
+  country: string;
+  iso: string;
+  gold: number;
+  silver: number;
+  bronze: number;
+  total: number;
 }
 
 export interface OlympicEvent {

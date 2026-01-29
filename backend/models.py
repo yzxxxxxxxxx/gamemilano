@@ -64,6 +64,23 @@ class ChinaMedalResponse(BaseModel):
     updated_at: datetime
 
 
+class HistoricalEditionResponse(BaseModel):
+    """历史届次响应模型"""
+    year: int
+    location: str
+
+
+class HistoricalMedalResponse(BaseModel):
+    """历史奖牌榜单项响应"""
+    rank: int
+    country: str
+    iso: str
+    gold: int
+    silver: int
+    bronze: int
+    total: int
+
+
 # ========== AI相关模型 ==========
 
 class AIAthleteRequest(BaseModel):

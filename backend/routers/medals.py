@@ -8,7 +8,7 @@ from supabase import create_client, Client
 from datetime import datetime
 
 from backend.config import SUPABASE_URL, SUPABASE_KEY
-from backend.models import MedalResponse, ChinaMedalResponse
+from backend.models import MedalResponse, ChinaMedalResponse, HistoricalEditionResponse, HistoricalMedalResponse
 
 router = APIRouter(prefix="/api/medals", tags=["medals"])
 
@@ -117,3 +117,55 @@ async def get_china_medals():
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"获取中国队奖牌数据失败: {str(e)}")
+
+
+@router.get("/history", response_model=List[HistoricalEditionResponse])
+async def get_history_editions():
+    """获取所有历史届次列表"""
+    supabase = get_supabase()
+    try:
+        # 获取所有唯一的年份和地点组合，按年份倒序
+        result = supabase.table("historical_medals").select("year, location").order("year", desc=True).execute()
+        
+        # 去重（因为每届有多个国家）
+        seen = set()
+        editions = []
+        for item in result.data:
+            if item["year"] not in seen:
+                editions.append(HistoricalEditionResponse(year=item["year"], location=item["location"]))
+                seen.add(item["year"])
+        
+        return editions
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"获取历史届次失败: {str(e)}")
+
+
+@router.get("/history/{year}", response_model=List[HistoricalMedalResponse])
+async def get_history_by_year(year: int):
+    """获取指定年份的历史奖牌榜"""
+    supabase = get_supabase()
+    try:
+        result = supabase.table("historical_medals")\
+            .select("*")\
+            .eq("year", year)\
+            .order("rank", desc=False)\
+            .execute()
+        
+        if not result.data:
+            raise HTTPException(status_code=404, detail=f"未找到 {year} 年的数据")
+            
+        return [
+            HistoricalMedalResponse(
+                rank=m["rank"],
+                country=m["country"],
+                iso=m["iso"],
+                gold=m["gold"],
+                silver=m["silver"],
+                bronze=m["bronze"],
+                total=m["gold"] + m["silver"] + m["bronze"]
+            ) for m in result.data
+        ]
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"获取历史奖牌榜失败: {str(e)}")
