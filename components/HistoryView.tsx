@@ -148,11 +148,17 @@ const HistoryView: React.FC = () => {
                                         {medal.rank > 3 && <span className="text-[14px] font-black italic text-slate-500 ml-1">{medal.rank}</span>}
                                     </div>
                                     <div className="col-span-4 flex items-center gap-3">
-                                        <img
-                                            src={`https://flagsapi.com/${medal.iso === 'CN' ? 'CN' : medal.iso}/flat/64.png`}
-                                            alt={medal.country}
-                                            className="w-6 h-4 object-cover rounded-[2px] opacity-90 shadow-sm"
-                                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                        <span
+                                            className={`fi fi-${medal.iso === 'ROC' ? 'ru' : (medal.iso === 'CN' ? 'cn' : medal.iso.toLowerCase())}`}
+                                            style={{
+                                                width: '24px',
+                                                height: '16px',
+                                                display: 'inline-block',
+                                                borderRadius: '2px',
+                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                backgroundSize: 'cover',
+                                                flexShrink: 0
+                                            }}
                                         />
                                         <span className="text-[13px] font-bold text-white truncate">{medal.country}</span>
                                     </div>
