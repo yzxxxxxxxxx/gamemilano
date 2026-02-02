@@ -84,10 +84,12 @@ export function getOlympicDates(): Date[] {
  * 格式化日期显示 (e.g. "04", "周三")
  */
 export function formatDateDisplay(date: Date) {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
     const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
     const weekday = weekdays[date.getDay()];
-    const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD
+    const dateStr = `${year}-${month}-${day}`; // YYYY-MM-DD
 
     return { day, weekday, dateStr };
 }

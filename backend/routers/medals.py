@@ -9,6 +9,7 @@ from datetime import datetime
 
 from backend.config import SUPABASE_URL, SUPABASE_KEY
 from backend.models import MedalResponse, ChinaMedalResponse, HistoricalEditionResponse, HistoricalMedalResponse
+from backend.scripts.sync_medals import get_iso
 
 router = APIRouter(prefix="/api/medals", tags=["medals"])
 
@@ -124,20 +125,22 @@ async def get_history_editions():
     """获取所有历史届次列表"""
     supabase = get_supabase()
     try:
-        # 获取所有唯一的年份和地点组合，按年份倒序
-        result = supabase.table("historical_medals").select("year, location").order("year", desc=True).execute()
+        # 获取所有唯一的年份和城市组合，按年份倒序
+        # 修正：截图显示列名为 Year 和 City
+        result = supabase.table("history_medals_duplicate").select("Year, City").order("Year", desc=True).execute()
         
         # 去重（因为每届有多个国家）
         seen = set()
         editions = []
         for item in result.data:
-            if item["year"] not in seen:
-                editions.append(HistoricalEditionResponse(year=item["year"], location=item["location"]))
-                seen.add(item["year"])
+            if item["Year"] not in seen:
+                editions.append(HistoricalEditionResponse(year=item["Year"], location=item["City"]))
+                seen.add(item["Year"])
         
         return editions
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"获取历史届次失败: {str(e)}")
+
 
 
 @router.get("/history/{year}", response_model=List[HistoricalMedalResponse])
@@ -145,10 +148,11 @@ async def get_history_by_year(year: int):
     """获取指定年份的历史奖牌榜"""
     supabase = get_supabase()
     try:
-        result = supabase.table("historical_medals")\
+        # 修正：根据截图列名为 Year, Rank, Country, gold, silver, bronze
+        result = supabase.table("history_medals_duplicate")\
             .select("*")\
-            .eq("year", year)\
-            .order("rank", desc=False)\
+            .eq("Year", year)\
+            .order("Rank", desc=False)\
             .execute()
         
         if not result.data:
@@ -156,9 +160,9 @@ async def get_history_by_year(year: int):
             
         return [
             HistoricalMedalResponse(
-                rank=m["rank"],
-                country=m["country"],
-                iso=m["iso"],
+                rank=m["Rank"],
+                country=m["Country"],
+                iso=get_iso(m["Country"]),  # 从国家名映射 ISO
                 gold=m["gold"],
                 silver=m["silver"],
                 bronze=m["bronze"],
@@ -169,3 +173,4 @@ async def get_history_by_year(year: int):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"获取历史奖牌榜失败: {str(e)}")
+

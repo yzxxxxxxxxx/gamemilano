@@ -41,37 +41,55 @@ const HistoryView: React.FC = () => {
     return (
         <div className="flex flex-col min-h-full px-4 pt-4 pb-8">
             <div className="flex items-center gap-3 mb-6">
-                <span className="material-symbols-outlined text-milan-blue text-[32px]">history</span>
-                <h1 className="text-2xl font-black text-white italic tracking-tight">历届冬奥</h1>
+                <span className="material-symbols-outlined text-milan-blue text-[22px]">history</span>
+                <h1 className="text-lg font-bold text-white">历届冬奥</h1>
             </div>
 
             {!selectedYear ? (
                 <div className="grid grid-cols-1 gap-4">
-                    {editions.map((edition) => (
-                        <button
-                            key={edition.year}
-                            onClick={() => handleEditionClick(edition)}
-                            className="group relative overflow-hidden rounded-2xl p-5 text-left transition-all active:scale-[0.98]"
-                        >
-                            {/* Card Background with Gradient */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-50 group-hover:opacity-80 transition-opacity" />
-                            <div className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-milan-blue/50 to-transparent" />
+                    {editions.map((edition) => {
+                        // Use .jpg for local city images from olympics_city_images
+                        const bgImage = `/history_bgs/${edition.year}.jpg`;
 
-                            <div className="relative z-10 flex items-center justify-between">
-                                <div>
-                                    <div className="text-milan-blue font-black text-2xl italic tracking-tighter mb-1">
-                                        {edition.year}
+                        return (
+                            <button
+                                key={edition.year}
+                                onClick={() => handleEditionClick(edition)}
+                                className="group relative overflow-hidden rounded-2xl p-6 text-left transition-all active:scale-[0.98] h-32 bg-slate-900"
+                            >
+                                {/* Background Image with Zoom Effect */}
+                                <div className="absolute inset-0 z-0">
+                                    <img
+                                        src={bgImage}
+                                        alt={edition.location}
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60"
+                                        onError={(e) => {
+                                            // Fallback to generic if jpg doesn't exist
+                                            e.currentTarget.src = '/medal_bg.png';
+                                            e.currentTarget.className = "w-full h-full object-cover opacity-20";
+                                        }}
+                                    />
+                                    {/* Dark Overlay with Gradient for better contrast */}
+                                    <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-black/20" />
+                                    <div className="absolute inset-0 bg-milan-blue/5 mix-blend-overlay" />
+                                </div>
+
+                                <div className="relative z-10 flex items-center justify-between h-full">
+                                    <div className="flex flex-col justify-center">
+                                        <div className="text-milan-blue font-black text-2xl italic tracking-tighter mb-0.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                                            {edition.year}
+                                        </div>
+                                        <div className="text-white font-bold text-lg drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] opacity-90">
+                                            {edition.location}
+                                        </div>
                                     </div>
-                                    <div className="text-white font-bold text-lg">
-                                        {edition.location}
+                                    <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white/50 group-hover:text-milan-blue group-hover:bg-white/20 transition-all border border-white/10">
+                                        <span className="material-symbols-outlined text-xl">chevron_right</span>
                                     </div>
                                 </div>
-                                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/30 group-hover:text-milan-blue group-hover:bg-white/10 transition-all">
-                                    <span className="material-symbols-outlined">chevron_right</span>
-                                </div>
-                            </div>
-                        </button>
-                    ))}
+                            </button>
+                        );
+                    })}
                     {editions.length === 0 && !error && (
                         <div className="flex flex-col items-center justify-center py-20 text-white/20">
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-milan-blue mb-4"></div>

@@ -33,12 +33,18 @@ async def get_events(
         # 构建查询
         query = supabase.table("events").select("*")
         
-        # 按日期筛选
+        # 按日期筛选 (北京时间)
         if event_date:
-            start_of_day = datetime.combine(event_date, datetime.min.time())
-            end_of_day = datetime.combine(event_date, datetime.max.time())
-            query = query.gte("event_time", start_of_day.isoformat())
-            query = query.lte("event_time", end_of_day.isoformat())
+            # 用户选择的是北京时间 D 日 (00:00 - 24:00)
+            # 对应的意大利时间 (CET, UTC+1) = 北京时间 (UTC+8) - 7h
+            # 所以我们要找意大利时间在 (D日 00:00 - 7h) 到 (D+1日 00:00 - 7h) 之间的比赛
+            from datetime import timedelta
+            bj_start = datetime.combine(event_date, datetime.min.time())
+            it_start = bj_start - timedelta(hours=7)
+            it_end = it_start + timedelta(days=1)
+            
+            query = query.gte("event_time", it_start.isoformat())
+            query = query.lt("event_time", it_end.isoformat())
         
         # 中国队筛选
         if team_china_only:
@@ -110,12 +116,15 @@ async def get_featured_events(
             
         result_limit = limit if limit > 0 else 100
         
-        # 辅助函数：添加时间筛选
+        # 辅助函数：添加时间筛选 (北京时间)
         def apply_time_filter(qry):
             if date:
-                start = datetime.combine(date, datetime.min.time()).isoformat()
-                end = datetime.combine(date, datetime.max.time()).isoformat()
-                return qry.gte("event_time", start).lte("event_time", end)
+                # 北京时间 D 日 (00:00 - 24:00) -> 意大利时间 (D日 00:00 - 7h) 到 (D+1日 00:00 - 7h)
+                from datetime import timedelta
+                bj_start = datetime.combine(date, datetime.min.time())
+                it_start = bj_start - timedelta(hours=7)
+                it_end = it_start + timedelta(days=1)
+                return qry.gte("event_time", it_start.isoformat()).lt("event_time", it_end.isoformat())
             else:
                 return qry.gte("event_time", current_time)
 
