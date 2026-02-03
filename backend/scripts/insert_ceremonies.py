@@ -28,7 +28,7 @@ def insert_ceremonies():
             "event_time": "2026-02-06T20:00:00", # Local Italy time
             "location": "圣西罗体育场",
             "is_team_china": True, # Mark as true so it appears in featured/countdown
-            "type": "final"
+            "type": "preliminary"
         },
         {
             "sport": "仪式",
@@ -37,7 +37,7 @@ def insert_ceremonies():
             "event_time": "2026-02-22T20:00:00", # Local Italy time
             "location": "维罗纳圆形竞技场",
             "is_team_china": True,
-            "type": "final"
+            "type": "preliminary"
         }
     ]
     

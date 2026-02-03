@@ -32,7 +32,7 @@ async def call_glm_api(prompt: str) -> Optional[str]:  # 修正返回值类型�
     safe_prompt = prompt.strip().replace("\n", " ").replace('"', '').replace("'", "").replace("\\", "")
     # 构造请求体
     payload = {
-        "model": "glm-4.7-flash",
+        "model": "glm-4-flash",
         "messages": [
             {
                 "role": "user",
@@ -40,7 +40,7 @@ async def call_glm_api(prompt: str) -> Optional[str]:  # 修正返回值类型�
             }
         ],
         "temperature": 0.7,
-        "max_tokens": 5000
+        "max_tokens": 500
     }
     
     print(f"Calling ZHIPU API for: {safe_prompt[:50]}...")
@@ -51,7 +51,7 @@ async def call_glm_api(prompt: str) -> Optional[str]:  # 修正返回值类型�
                 ZHIPU_API_URL,
                 headers=headers,
                 json=payload,
-                timeout=30.0
+                timeout=60.0
             )
             
             if response.status_code == 200:
@@ -76,6 +76,8 @@ async def call_glm_api(prompt: str) -> Optional[str]:  # 修正返回值类型�
                 print(f"ZHIPU API Error: {response.status_code} - {response.text}")
         except Exception as e:
             print(f"ZHIPU API Exception: {str(e)}")
+            import traceback
+            traceback.print_exc()
         
         return None
 

@@ -16,7 +16,7 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 
 # 智谱 AI 配置
-ZHIPU_API_KEY = os.getenv("ZHIPU_API_KEY", "91a47cf56b854cf28df8ebda02f88522.2EwvbbSfNMQMHOrq")
+ZHIPU_API_KEY = os.getenv("ZHIPU_API_KEY") or os.getenv("ZHIPUAI_API_KEY") or "91a47cf56b854cf28df8ebda02f88522.2EwvbbSfNMQMHOrq"
 
 # 服务器配置
 API_HOST = os.getenv("API_HOST", "0.0.0.0")

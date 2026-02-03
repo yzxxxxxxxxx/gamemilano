@@ -169,7 +169,7 @@ const ScheduleView: React.FC = () => {
                                                     <span className="w-1 h-1 bg-china-red rounded-full"></span> 中国队
                                                 </span>
                                             )}
-                                            {event.type === 'final' && (
+                                            {event.type === 'final' && event.sport !== '仪式' && (
                                                 <span className="text-gold/80 text-[10px] font-bold border border-gold/20 px-1.5 py-0.5 rounded">🏅 金牌赛</span>
                                             )}
                                         </div>

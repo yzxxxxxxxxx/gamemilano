@@ -284,7 +284,7 @@ const HomeView: React.FC<Props> = ({ onSwitchTab }) => {
                               <span className="w-1.5 h-1.5 bg-china-red rounded-full animate-pulse"></span> 中国队
                             </span>
                           )}
-                          {(event.type === 'final' || event.title.includes('决赛')) && (
+                          {(event.type === 'final' || event.title.includes('决赛')) && event.sport !== '仪式' && (
                             <span className="text-gold text-[10px] font-bold uppercase tracking-wider shrink-0 border border-gold/20 px-1 rounded">🏅 金牌赛</span>
                           )}
                         </div>

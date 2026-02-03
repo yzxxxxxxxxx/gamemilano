@@ -81,8 +81,8 @@ const AISearchView: React.FC<Props> = ({ onClose }) => {
       </form>
 
       {result && (
-        <div className="bg-milan-purple/10 border border-milan-purple/30 rounded-xl p-4 animate-in fade-in duration-500">
-          <p className="text-white/90 text-sm leading-relaxed italic">
+        <div className="bg-milan-purple/10 border border-milan-purple/30 rounded-xl p-4 animate-in fade-in duration-500 max-h-[40vh] overflow-y-auto no-scrollbar">
+          <p className="text-white/90 text-sm leading-relaxed italic whitespace-pre-wrap">
             "{result}"
           </p>
         </div>
@@ -90,7 +90,7 @@ const AISearchView: React.FC<Props> = ({ onClose }) => {
 
       {!result && !loading && (
         <div className="text-center text-white/30 text-[10px] uppercase tracking-widest mt-4">
-          由智谱 GLM-4.7-Flash 提供支持
+          由智谱 GLM-4-Flash 提供支持
         </div>
       )}
     </div>
