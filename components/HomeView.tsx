@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavTab } from '../types';
 import { getFeaturedEvents, getEvents, getChinaMedals, addReminder, removeReminder, EventData, ChinaMedalData } from '../services/api';
-import { calculateTimeLeft, convertMilanToBeijing, formatTime, getOlympicDates, formatDateDisplay } from '../utils/time';
+import { calculateTimeLeft, convertMilanToBeijing, formatTime, getOlympicDates, formatDateDisplay, getInitialSelectedDate } from '../utils/time';
 
 interface Props {
   onSwitchTab: (tab: NavTab) => void;
@@ -18,7 +18,7 @@ const HomeView: React.FC<Props> = ({ onSwitchTab }) => {
   const [error, setError] = useState<string | null>(null);
 
   // Date selection for Home View
-  const [selectedDate, setSelectedDate] = useState<string | null>('2026-02-04');
+  const [selectedDate, setSelectedDate] = useState<string | null>(getInitialSelectedDate());
 
   // Swipe logic
   const [touchStart, setTouchStart] = useState<number | null>(null);

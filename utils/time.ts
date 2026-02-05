@@ -93,3 +93,28 @@ export function formatDateDisplay(date: Date) {
 
     return { day, weekday, dateStr };
 }
+
+/**
+ * 获取初始选中的日期
+ * 如果当前日期在赛期内，返回当天日期字符串
+ * 如果在赛期前，返回开幕式日期 (2月4日)
+ * 如果在赛期后，返回闭幕式日期 (2月22日)
+ */
+export function getInitialSelectedDate(): string {
+    const now = new Date();
+    // 强制使用北京时间进行判断 (UTC+8)
+    const year = 2026;
+    const month = 1; // February
+
+    const startDay = new Date(year, month, 4);
+    const endDay = new Date(year, month, 22);
+
+    if (now < startDay) {
+        return '2026-02-04';
+    } else if (now > endDay) {
+        return '2026-02-22';
+    } else {
+        const { dateStr } = formatDateDisplay(now);
+        return dateStr;
+    }
+}

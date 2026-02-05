@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { getEvents, EventData, addReminder, removeReminder } from '../services/api';
-import { convertMilanToBeijing, formatTime, getOlympicDates, formatDateDisplay } from '../utils/time';
+import { convertMilanToBeijing, formatTime, getOlympicDates, formatDateDisplay, getInitialSelectedDate } from '../utils/time';
 
 const ScheduleView: React.FC = () => {
     const [events, setEvents] = useState<EventData[]>([]);
@@ -10,7 +10,7 @@ const ScheduleView: React.FC = () => {
 
     // 默认选中 "全部" 或者 今天 (如果今天在赛期内)
     // 这里默认为 null，表示"全部赛事"
-    const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const [selectedDate, setSelectedDate] = useState<string | null>(getInitialSelectedDate());
 
     const dateScrollRef = useRef<HTMLDivElement>(null);
 
