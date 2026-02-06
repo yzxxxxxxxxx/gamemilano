@@ -137,13 +137,24 @@ async def get_history_editions():
         
         # 创建统计数据的字典方便查找
         stats_map = {}
+        # 创建统计数据的字典方便查找
+        stats_map = {}
         for item in events_res.data:
             year = item["year"]
-            if year not in stats_map:
+            if year not in stats_map or (item.get("countries_count") and not stats_map[year]["countries"]):
                 stats_map[year] = {
                     "countries": item.get("countries_count", 0),
                     "events": item.get("events_count", 0)
                 }
+        
+        # 补充一些核心年份的兜底数据（特别是北京2022）
+        fallback_stats = {
+            2022: {"countries": 91, "events": 109},
+            2018: {"countries": 92, "events": 102},
+            2014: {"countries": 88, "events": 98},
+            2010: {"countries": 82, "events": 86},
+            2006: {"countries": 80, "events": 84},
+        }
         
         # 3. 去重合并
         seen = set()
@@ -151,12 +162,18 @@ async def get_history_editions():
         for item in medals_res.data:
             year = item["Year"]
             if year not in seen:
-                stats = stats_map.get(year, {"countries": 0, "events": 0})
+                # 优先使用数据库数据，如果没有则使用兜底数据
+                db_stats = stats_map.get(year, {"countries": 0, "events": 0})
+                fb_stats = fallback_stats.get(year, {"countries": 0, "events": 0})
+                
+                final_countries = db_stats["countries"] or fb_stats["countries"]
+                final_events = db_stats["events"] or fb_stats["events"]
+                
                 editions.append(HistoricalEditionResponse(
                     year=year, 
                     location=item["City"],
-                    countries_count=stats["countries"],
-                    events_count=stats["events"]
+                    countries_count=final_countries,
+                    events_count=final_events
                 ))
                 seen.add(year)
         
