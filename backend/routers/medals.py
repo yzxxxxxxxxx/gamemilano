@@ -125,22 +125,40 @@ async def get_history_editions():
     """获取所有历史届次列表"""
     supabase = get_supabase()
     try:
-        # 从 history_events 获取届次信息，包括国家数和小项数
-        # 注意：历史数据表里这些数值在每行都是重复的，所以先按年份分组
-        result = supabase.table("history_events").select("year, city, countries_count, events_count").order("year", desc=True).execute()
+        # 同时从两个表获取数据并进行合并
+        # history_medals_duplicate 包含完整的届次列表（从1924年开始）
+        # history_events 包含部分届次（1960年以后）的国家数和项目数
         
-        # 去重
+        # 1. 获取完整的届次基础信息
+        medals_res = supabase.table("history_medals_duplicate").select("Year, City").order("Year", desc=True).execute()
+        
+        # 2. 获取统计数据
+        events_res = supabase.table("history_events").select("year, countries_count, events_count").execute()
+        
+        # 创建统计数据的字典方便查找
+        stats_map = {}
+        for item in events_res.data:
+            year = item["year"]
+            if year not in stats_map:
+                stats_map[year] = {
+                    "countries": item.get("countries_count", 0),
+                    "events": item.get("events_count", 0)
+                }
+        
+        # 3. 去重合并
         seen = set()
         editions = []
-        for item in result.data:
-            if item["year"] not in seen:
+        for item in medals_res.data:
+            year = item["Year"]
+            if year not in seen:
+                stats = stats_map.get(year, {"countries": 0, "events": 0})
                 editions.append(HistoricalEditionResponse(
-                    year=item["year"], 
-                    location=item["city"],
-                    countries_count=item.get("countries_count", 0),
-                    events_count=item.get("events_count", 0)
+                    year=year, 
+                    location=item["City"],
+                    countries_count=stats["countries"],
+                    events_count=stats["events"]
                 ))
-                seen.add(item["year"])
+                seen.add(year)
         
         return editions
     except Exception as e:
