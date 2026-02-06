@@ -68,6 +68,8 @@ class HistoricalEditionResponse(BaseModel):
     """历史届次响应模型"""
     year: int
     location: str
+    countries_count: Optional[int] = 0
+    events_count: Optional[int] = 0
 
 
 class HistoricalMedalResponse(BaseModel):
@@ -79,6 +81,19 @@ class HistoricalMedalResponse(BaseModel):
     silver: int
     bronze: int
     total: int
+
+
+class HistoricalEventResponse(BaseModel):
+    """历史赛事数据响应"""
+    id: str
+    sport_name: str
+    event_name: str
+    gold_country: Optional[str] = None
+    gold_iso: Optional[str] = None
+    silver_country: Optional[str] = None
+    silver_iso: Optional[str] = None
+    bronze_country: Optional[str] = None
+    bronze_iso: Optional[str] = None
 
 
 # ========== AI相关模型 ==========

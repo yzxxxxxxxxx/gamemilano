@@ -131,6 +131,13 @@ export async function getHistoryMedals(year: number): Promise<HistoricalMedalEnt
   return request<HistoricalMedalEntry[]>(`/medals/history/${year}`);
 }
 
+/**
+ * 获取指定年份的历史赛事列表
+ */
+export async function getHistoryEvents(year: number): Promise<HistoricalEvent[]> {
+  return request<HistoricalEvent[]>(`/medals/history/${year}/events`);
+}
+
 export interface HistoricalMedalEntry {
   rank: number;
   country: string;
@@ -139,6 +146,18 @@ export interface HistoricalMedalEntry {
   silver: number;
   bronze: number;
   total: number;
+}
+
+export interface HistoricalEvent {
+  id: string;
+  sport_name: string;
+  event_name: string;
+  gold_country?: string;
+  gold_iso?: string;
+  silver_country?: string;
+  silver_iso?: string;
+  bronze_country?: string;
+  bronze_iso?: string;
 }
 
 // ========== AI API ==========

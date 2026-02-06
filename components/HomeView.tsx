@@ -75,27 +75,29 @@ const HomeView: React.FC<Props> = ({ onSwitchTab }) => {
         setLoading(true);
         setError(null);
 
-        const [eventsData, medalData] = await Promise.all([
+        const [eventsData, medalData, nextUpcoming] = await Promise.all([
           // Only fetch featured events (China/Finals), optionally filtered by date
           getFeaturedEvents(100, selectedDate), // Increase limit when filtering by date to show all matches
-          getChinaMedals()
+          getChinaMedals(),
+          getFeaturedEvents(1, null) // Fetch the single nearest future featured event regardless of selected date
         ]);
 
         setEvents(eventsData);
         setChinaStats(medalData);
 
-        // Find the next significant event for countdown (from featured or just the first in list)
-        // Always set nextEvent to the first event with valid time
-        // Priority: Nearest Team China event -> Nearest Featured event
-        const validEvents = eventsData.filter(e => e.event_time);
-
-        let targetEvent = validEvents.find(e => e.is_team_china);
-
-        if (!targetEvent && validEvents.length > 0) {
-          targetEvent = validEvents[0];
+        // Find the next significant event for countdown
+        // Priority: Nearest Team China/Featured event (independent of selected date)
+        if (nextUpcoming && nextUpcoming.length > 0) {
+          setNextEvent(nextUpcoming[0]);
+        } else {
+          // Fallback to searching in current list if global featured fetch failed (e.g. all games finished)
+          const validEvents = eventsData.filter(e => e.event_time);
+          let targetEvent = validEvents.find(e => e.is_team_china);
+          if (!targetEvent && validEvents.length > 0) {
+            targetEvent = validEvents[0];
+          }
+          setNextEvent(targetEvent || null);
         }
-
-        setNextEvent(targetEvent || null);
 
       } catch (err) {
         console.error('加载数据失败:', err);
@@ -288,7 +290,14 @@ const HomeView: React.FC<Props> = ({ onSwitchTab }) => {
                             <span className="text-gold text-[10px] font-bold uppercase tracking-wider shrink-0 border border-gold/20 px-1 rounded">🏅 金牌赛</span>
                           )}
                         </div>
-                        <h4 className="text-white font-bold text-base leading-snug truncate pr-2">{event.title}</h4>
+                        <div className="marquee-container w-full max-w-[260px]">
+                          <div className={event.title.length > 12 ? "marquee-content" : ""}>
+                            <h4 className="text-white font-bold text-base leading-snug">
+                              {event.title}
+                              {event.title.length > 12 && <span className="ml-24">{event.title}</span>}
+                            </h4>
+                          </div>
+                        </div>
                         <div className="flex items-center gap-3 mt-2 text-white/60 text-xs">
                           <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">schedule</span> {timeStr}</span>
                           <span className="flex items-center gap-1 truncate max-w-[100px]"><span className="material-symbols-outlined text-[14px]">location_on</span> {event.location || '未知地点'}</span>

@@ -10,6 +10,8 @@ export enum NavTab {
 export interface OlympicEdition {
   year: number;
   location: string;
+  countries_count?: number;
+  events_count?: number;
 }
 
 export interface HistoricalMedalEntry {
@@ -20,6 +22,18 @@ export interface HistoricalMedalEntry {
   silver: number;
   bronze: number;
   total: number;
+}
+
+export interface HistoricalEvent {
+  id: string;
+  sport_name: string;
+  event_name: string;
+  gold_country?: string;
+  gold_iso?: string;
+  silver_country?: string;
+  silver_iso?: string;
+  bronze_country?: string;
+  bronze_iso?: string;
 }
 
 export interface OlympicEvent {

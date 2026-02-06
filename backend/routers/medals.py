@@ -8,7 +8,7 @@ from supabase import create_client, Client
 from datetime import datetime
 
 from backend.config import SUPABASE_URL, SUPABASE_KEY
-from backend.models import MedalResponse, ChinaMedalResponse, HistoricalEditionResponse, HistoricalMedalResponse
+from backend.models import MedalResponse, ChinaMedalResponse, HistoricalEditionResponse, HistoricalMedalResponse, HistoricalEventResponse
 from backend.scripts.sync_medals import get_iso
 
 router = APIRouter(prefix="/api/medals", tags=["medals"])
@@ -125,21 +125,58 @@ async def get_history_editions():
     """获取所有历史届次列表"""
     supabase = get_supabase()
     try:
-        # 获取所有唯一的年份和城市组合，按年份倒序
-        # 修正：截图显示列名为 Year 和 City
-        result = supabase.table("history_medals_duplicate").select("Year, City").order("Year", desc=True).execute()
+        # 从 history_events 获取届次信息，包括国家数和小项数
+        # 注意：历史数据表里这些数值在每行都是重复的，所以先按年份分组
+        result = supabase.table("history_events").select("year, city, countries_count, events_count").order("year", desc=True).execute()
         
-        # 去重（因为每届有多个国家）
+        # 去重
         seen = set()
         editions = []
         for item in result.data:
-            if item["Year"] not in seen:
-                editions.append(HistoricalEditionResponse(year=item["Year"], location=item["City"]))
-                seen.add(item["Year"])
+            if item["year"] not in seen:
+                editions.append(HistoricalEditionResponse(
+                    year=item["year"], 
+                    location=item["city"],
+                    countries_count=item.get("countries_count", 0),
+                    events_count=item.get("events_count", 0)
+                ))
+                seen.add(item["year"])
         
         return editions
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"获取历史届次失败: {str(e)}")
+
+
+@router.get("/history/{year}/events", response_model=List[HistoricalEventResponse])
+async def get_history_events_by_year(year: int):
+    """获取指定年份的历史赛事列表（含奖牌获得国）"""
+    supabase = get_supabase()
+    try:
+        # 获取该年份的所有赛事
+        result = supabase.table("history_events").select("*").eq("year", year).execute()
+        
+        if not result.data:
+            return []
+            
+        return [
+            HistoricalEventResponse(
+                id=str(item["id"]),
+                sport_name=item["sport_name"],
+                event_name=item["event_name"],
+                gold_country=item.get("gold_country"),
+                gold_iso=get_iso(item["gold_country"]) if item.get("gold_country") else None,
+                silver_country=item.get("silver_country"),
+                silver_iso=get_iso(item["silver_country"]) if item.get("silver_country") else None,
+                bronze_country=item.get("bronze_country"),
+                bronze_iso=get_iso(item["bronze_country"]) if item.get("bronze_country") else None
+            ) for item in result.data
+        ]
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"获取历史赛事列表失败: {str(e)}")
 
 
 
