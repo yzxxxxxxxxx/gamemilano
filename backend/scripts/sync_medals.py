@@ -117,6 +117,7 @@ async def scrape_medals():
                     "silver": silver,
                     "bronze": bronze
                 })
+                logger.info(f"Captured: {country_name} ({get_iso(country_name)}): {gold}-{silver}-{bronze}")
             except Exception as row_e:
                 logger.error(f"解析这一行时出错: {row_e}")
                 continue

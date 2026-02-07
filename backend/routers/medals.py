@@ -9,7 +9,7 @@ from datetime import datetime
 
 from backend.config import SUPABASE_URL, SUPABASE_KEY
 from backend.models import MedalResponse, ChinaMedalResponse, HistoricalEditionResponse, HistoricalMedalResponse, HistoricalEventResponse
-from backend.scripts.sync_medals import get_iso
+from backend.scripts.sync_medals import get_iso, run_sync
 
 router = APIRouter(prefix="/api/medals", tags=["medals"])
 
@@ -72,6 +72,20 @@ async def get_medals(
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"获取奖牌榜失败: {str(e)}")
+
+
+@router.post("/sync")
+async def sync_medals_manual():
+    """
+    手动触发奖牌榜同步
+    """
+    try:
+        await run_sync()
+        return {"status": "success", "message": "奖牌榜同步已触发"}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"同步失败: {str(e)}")
 
 
 @router.get("/china", response_model=ChinaMedalResponse)
