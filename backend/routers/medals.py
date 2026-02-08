@@ -74,8 +74,8 @@ async def get_medals(
         raise HTTPException(status_code=500, detail=f"获取奖牌榜失败: {str(e)}")
 
 
-@router.post("/sync")
-async def sync_medals_manual():
+@router.get("/sync")
+async def sync_medals():
     """
     手动触发奖牌榜同步
     """
