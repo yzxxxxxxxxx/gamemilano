@@ -19,6 +19,21 @@ const HomeView: React.FC<Props> = ({ onSwitchTab }) => {
 
   // Date selection for Home View
   const [selectedDate, setSelectedDate] = useState<string | null>(getInitialSelectedDate());
+  const dateScrollRef = React.useRef<HTMLDivElement>(null);
+
+  // 自动滚动到选中日期
+  useEffect(() => {
+    if (dateScrollRef.current && selectedDate) {
+      const selectedElement = dateScrollRef.current.querySelector('[data-selected="true"]');
+      if (selectedElement) {
+        selectedElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center'
+        });
+      }
+    }
+  }, [selectedDate, loading]); // Also trigger when loading finishes to ensure DOM is ready
 
   // Swipe logic
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -221,7 +236,10 @@ const HomeView: React.FC<Props> = ({ onSwitchTab }) => {
         <div className="flex items-center justify-between px-4 mb-2">
           <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest">2026年2月</h4>
         </div>
-        <div className="flex gap-3 px-4 overflow-x-auto no-scrollbar pb-2 scroll-smooth">
+        <div
+          ref={dateScrollRef}
+          className="flex gap-3 px-4 overflow-x-auto no-scrollbar pb-2 scroll-smooth"
+        >
           {olympicDates.map((date) => {
             const { day, weekday, dateStr } = formatDateDisplay(date);
             const isSelected = selectedDate === dateStr;
@@ -229,6 +247,7 @@ const HomeView: React.FC<Props> = ({ onSwitchTab }) => {
             return (
               <button
                 key={dateStr}
+                data-selected={isSelected}
                 onClick={() => setSelectedDate(isSelected ? null : dateStr)}
                 className={`flex flex-col items-center min-w-[56px] py-3 rounded-2xl transition-all ${isSelected ? 'milan-gradient shadow-lg shadow-milan-blue/20 scale-105' : 'ice-card'}`}
               >

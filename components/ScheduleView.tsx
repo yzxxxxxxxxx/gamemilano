@@ -14,6 +14,20 @@ const ScheduleView: React.FC = () => {
 
     const dateScrollRef = useRef<HTMLDivElement>(null);
 
+    // 自动滚动到选中日期
+    useEffect(() => {
+        if (dateScrollRef.current && selectedDate) {
+            const selectedElement = dateScrollRef.current.querySelector('[data-selected="true"]');
+            if (selectedElement) {
+                selectedElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'center'
+                });
+            }
+        }
+    }, [selectedDate, loading]);
+
     // 加载数据
     useEffect(() => {
         const loadData = async () => {
@@ -110,6 +124,7 @@ const ScheduleView: React.FC = () => {
                         return (
                             <button
                                 key={dateStr}
+                                data-selected={isSelected}
                                 onClick={() => setSelectedDate(isSelected ? null : dateStr)}
                                 className={`flex flex-col items-center min-w-[50px] py-2 rounded-xl transition-all shrink-0 ${isSelected ? 'milan-gradient shadow-lg shadow-milan-blue/20 scale-105' : 'bg-white/5 border border-white/5'}`}
                             >
