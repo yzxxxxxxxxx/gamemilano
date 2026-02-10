@@ -17,14 +17,17 @@ const ScheduleView: React.FC = () => {
     // 自动滚动到选中日期
     useEffect(() => {
         if (dateScrollRef.current && selectedDate) {
-            const selectedElement = dateScrollRef.current.querySelector('[data-selected="true"]');
-            if (selectedElement) {
-                selectedElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest',
-                    inline: 'center'
-                });
-            }
+            const timer = setTimeout(() => {
+                const selectedElement = dateScrollRef.current?.querySelector('[data-selected="true"]');
+                if (selectedElement) {
+                    selectedElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'nearest',
+                        inline: 'center'
+                    });
+                }
+            }, 100);
+            return () => clearTimeout(timer);
         }
     }, [selectedDate, loading]);
 

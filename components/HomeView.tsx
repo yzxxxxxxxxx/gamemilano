@@ -24,14 +24,18 @@ const HomeView: React.FC<Props> = ({ onSwitchTab }) => {
   // 自动滚动到选中日期
   useEffect(() => {
     if (dateScrollRef.current && selectedDate) {
-      const selectedElement = dateScrollRef.current.querySelector('[data-selected="true"]');
-      if (selectedElement) {
-        selectedElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest',
-          inline: 'center'
-        });
-      }
+      // 增加一点延时，确保 DOM 渲染完成
+      const timer = setTimeout(() => {
+        const selectedElement = dateScrollRef.current?.querySelector('[data-selected="true"]');
+        if (selectedElement) {
+          selectedElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'center'
+          });
+        }
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, [selectedDate, loading]); // Also trigger when loading finishes to ensure DOM is ready
 
